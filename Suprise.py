@@ -108,11 +108,16 @@ if not os.path.exists(UPLOAD_DIR):
 if 'clicked' not in st.session_state:
     st.session_state.clicked = False
 if 'song_path' not in st.session_state:
-    # Check for existing audio files in the upload directory
-    audio_files = [f for f in os.listdir(UPLOAD_DIR) if f.endswith(('.mp3', '.wav', '.ogg'))]
+    # Load the most recent audio file from the upload directory
+    audio_files = sorted(
+        [f for f in os.listdir(UPLOAD_DIR) if f.endswith(('.mp3', '.wav', '.ogg'))],
+        key=lambda x: os.path.getmtime(os.path.join(UPLOAD_DIR, x)),
+        reverse=True
+    )
     st.session_state.song_path = os.path.join(UPLOAD_DIR, audio_files[0]) if audio_files else None
 if 'show_uploader' not in st.session_state:
-    st.session_state.show_uploader = False
+    # Show uploader by default if no song is loaded
+    st.session_state.show_uploader = st.session_state.song_path is None
 
 # Function to toggle clicked state
 def toggle_click():
@@ -147,38 +152,46 @@ def save_song(uploaded_file):
 
 # Home page
 if not st.session_state.clicked:
-    # Title of the dashboard
     st.markdown('<h1 class="title">Welcome to the Dashboard! 🦄🎶</h1>', unsafe_allow_html=True)
-
-    # Smash for Chapri button
     st.button("Smash for Chapri! 😜", key="greet_button", on_click=toggle_click)
 
 # Greeting page
-if st.session_state.clicked:
+else:
     # Full-screen greeting
-    with st.container():
-        st.markdown(
-            """
-            <div class="fullscreen">
-                <h1 class="greeting">Hello Chapri! 🌈</h1>
-                <button class="banger-button">Play Saved Banger! 🎵</button>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    st.markdown(
+        """
+        <div class="fullscreen">
+            <h1 class="greeting">Hello Chapri! 🌈</h1>
+            <button class="banger-button">Play Saved Banger! 🎵</button>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    # Play Saved Banger button
-    if st.button("Play Saved Banger! 🎵", key="play_saved_song"):
-        if st.session_state.song_path and os.path.exists(st.session_state.song_path):
-            try:
-                with open(st.session_state.song_path, "rb") as f:
-                    st.audio(f.read(), format="audio/mp3")
-                st.markdown('<p class="debug-text">Debug: Rockin’ the saved song! 🤘</p>', unsafe_allow_html=True)
-            except Exception as e:
-                st.error(f"Can’t play the saved song! 😿 Error: {str(e)}")
-        else:
-            st.error("No saved banger found! Upload a song below! 😿")
-        toggle_uploader()  # Show uploader after clicking
+    # Play saved song
+    if st.session_state.song_path and os.path.exists(st.session_state.song_path):
+        try:
+            with open(st.session_state.song_path, "rb") as f:
+                st.audio(f.read(), format="audio/mp3")
+            st.markdown('<p class="debug-text">Debug: Rockin’ the saved song! 🤘</p>', unsafe_allow_html=True)
+            # Download button for the saved song
+            with open(st.session_state.song_path, "rb") as f:
+                st.download_button(
+                    label="Download Your Banger! 💾",
+                    data=f,
+                    file_name=os.path.basename(st.session_state.song_path),
+                    mime="audio/mp3",
+                    key="download_saved_song"
+                )
+        except Exception as e:
+            st.error(f"Can’t play the saved song! 😿 Error: {str(e)}")
+    else:
+        st.warning("No saved banger found! Upload a song below! 😿")
+        st.session_state.show_uploader = True
+
+    # Button to toggle uploader
+    if st.button("Upload New Banger! 🎵", key="toggle_uploader"):
+        toggle_uploader()
 
     # File uploader
     if st.session_state.show_uploader:
@@ -197,5 +210,5 @@ if st.session_state.clicked:
                     data=open(song_path, "rb"),
                     file_name=uploaded_file.name,
                     mime=uploaded_file.type,
-                    key="download_song"
+                    key="download_new_song"
                 )
