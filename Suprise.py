@@ -185,11 +185,6 @@ if not st.session_state.clicked:
     st.button("Smash for Chapri! 😜", key="greet_button", on_click=toggle_click)
 
     # File uploader (button-only, no drag-and-drop)
-    if uploaded_file is not None:
-        song_path = save_song(uploaded_file)
-        if song_path:
-            with open(song_path, "rb") as f:
-                st.audio(f.read(), format=uploaded_file.type)
             st.download_button(
                 label="Download Your New Banger! 💾",
                 data=open(song_path, "rb"),
