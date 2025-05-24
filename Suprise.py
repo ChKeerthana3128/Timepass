@@ -185,12 +185,6 @@ if not st.session_state.clicked:
     st.button("Smash for Chapri! 😜", key="greet_button", on_click=toggle_click)
 
     # File uploader (button-only, no drag-and-drop)
-    st.markdown('<p class="debug-text">Upload your banger song! 🎵</p>', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader(
-        "Choose your banger (MP3, WAV, OGG)! 😎",
-        type=["mp3", "wav", "ogg"],
-        key="audio_uploader"
-    )
     if uploaded_file is not None:
         song_path = save_song(uploaded_file)
         if song_path:
