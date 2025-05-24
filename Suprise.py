@@ -51,18 +51,6 @@ st.markdown(
         background-color: #d81b60;
         color: #ffeb3b;
     }
-    .banger-button {
-        background-color: #ff1744;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 10px;
-        font-size: 1.2rem;
-        font-weight: bold;
-        cursor: pointer;
-        display: block;
-        text-align: center;
-        margin: 20px auto;
-    }
     .debug-text {
         color: #ffffff;
         font-family: 'Arial', sans-serif;
@@ -115,18 +103,11 @@ if 'song_path' not in st.session_state:
         reverse=True
     )
     st.session_state.song_path = os.path.join(UPLOAD_DIR, audio_files[0]) if audio_files else None
-if 'show_uploader' not in st.session_state:
-    # Show uploader by default if no song is loaded
-    st.session_state.show_uploader = st.session_state.song_path is None
 
 # Function to toggle clicked state
 def toggle_click():
     st.session_state.clicked = True
     st.balloons()
-
-# Function to toggle uploader visibility
-def toggle_uploader():
-    st.session_state.show_uploader = not st.session_state.show_uploader
 
 # Function to save uploaded song
 def save_song(uploaded_file):
@@ -162,7 +143,6 @@ else:
         """
         <div class="fullscreen">
             <h1 class="greeting">Hello Chapri! 🌈</h1>
-            <button class="banger-button">Play Saved Banger! 🎵</button>
         </div>
         """,
         unsafe_allow_html=True
@@ -187,28 +167,23 @@ else:
             st.error(f"Can’t play the saved song! 😿 Error: {str(e)}")
     else:
         st.warning("No saved banger found! Upload a song below! 😿")
-        st.session_state.show_uploader = True
 
-    # Button to toggle uploader
-    if st.button("Upload New Banger! 🎵", key="toggle_uploader"):
-        toggle_uploader()
-
-    # File uploader
-    if st.session_state.show_uploader:
-        uploaded_file = st.file_uploader(
-            "Upload your banger song! 🎵 (MP3, WAV, etc.)",
-            type=["mp3", "wav", "ogg"],
-            key="audio_uploader"
-        )
-        if uploaded_file is not None:
-            song_path = save_song(uploaded_file)
-            if song_path:
-                with open(song_path, "rb") as f:
-                    st.audio(f.read(), format=uploaded_file.type)
-                st.download_button(
-                    label="Download Your Banger! 💾",
-                    data=open(song_path, "rb"),
-                    file_name=uploaded_file.name,
-                    mime=uploaded_file.type,
-                    key="download_new_song"
-                )
+    # File uploader (always visible)
+    st.markdown('<p class="debug-text">Upload your banger song! 🎵</p>', unsafe_allow_html=True)
+    uploaded_file = st.file_uploader(
+        "Choose your banger (MP3, WAV, OGG)! 😎",
+        type=["mp3", "wav", "ogg"],
+        key="audio_uploader"
+    )
+    if uploaded_file is not None:
+        song_path = save_song(uploaded_file)
+        if song_path:
+            with open(song_path, "rb") as f:
+                st.audio(f.read(), format=uploaded_file.type)
+            st.download_button(
+                label="Download Your New Banger! 💾",
+                data=open(song_path, "rb"),
+                file_name=uploaded_file.name,
+                mime=uploaded_file.type,
+                key="download_new_song"
+            )
