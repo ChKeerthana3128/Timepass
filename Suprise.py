@@ -86,9 +86,26 @@ st.markdown(
     .stFileUploader > div > div > div[draggable="true"] {
         display: none !important;
     }
-    /* Ensure the file uploader button remains visible */
+    /* Ensure the file uploader button remains visible and styled */
     .stFileUploader > div > div > button {
         display: block !important;
+        background-color: #ffeb3b;
+        color: #d81b60;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border-radius: 10px;
+        padding: 10px 20px;
+        border: 2px solid #d81b60;
+        transition: transform 0.2s;
+    }
+    .stFileUploader > div > div > button:hover {
+        transform: scale(1.1);
+        background-color: #d81b60;
+        color: #ffeb3b;
+    }
+    /* Hide the default Streamlit uploader label for cleaner look */
+    .stFileUploader > div > div > div > div > p {
+        display: none !important;
     }
     </style>
     """,
