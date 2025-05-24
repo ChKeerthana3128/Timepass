@@ -184,15 +184,6 @@ if not st.session_state.clicked:
     # Smash for Chapri button (second button)
     st.button("Smash for Chapri! 😜", key="greet_button", on_click=toggle_click)
 
-    # File uploader (button-only, no drag-and-drop)
-            st.download_button(
-                label="Download Your New Banger! 💾",
-                data=open(song_path, "rb"),
-                file_name=uploaded_file.name,
-                mime=uploaded_file.type,
-                key="download_new_song"
-            )
-
 # Greeting page
 else:
     st.markdown(
