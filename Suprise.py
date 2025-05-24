@@ -117,12 +117,11 @@ if 'show_uploader' not in st.session_state:
 # Function to toggle clicked state
 def toggle_click():
     st.session_state.clicked = True
-    st.session_state.show_uploader = False
     st.balloons()
 
 # Function to toggle uploader visibility
 def toggle_uploader():
-    st.session_state.show_uploader = True
+    st.session_state.show_uploader = not st.session_state.show_uploader
 
 # Function to save uploaded song
 def save_song(uploaded_file):
@@ -168,8 +167,8 @@ if st.session_state.clicked:
             unsafe_allow_html=True
         )
 
-    # Play Saved Banger button functionality
-    if st.button("Play Saved Banger! 🎵", key="play_saved_song", on_click=toggle_uploader):
+    # Play Saved Banger button
+    if st.button("Play Saved Banger! 🎵", key="play_saved_song"):
         if st.session_state.song_path and os.path.exists(st.session_state.song_path):
             try:
                 with open(st.session_state.song_path, "rb") as f:
@@ -179,8 +178,9 @@ if st.session_state.clicked:
                 st.error(f"Can’t play the saved song! 😿 Error: {str(e)}")
         else:
             st.error("No saved banger found! Upload a song below! 😿")
+        toggle_uploader()  # Show uploader after clicking
 
-    # Show file uploader only after clicking Play Saved Banger
+    # File uploader
     if st.session_state.show_uploader:
         uploaded_file = st.file_uploader(
             "Upload your banger song! 🎵 (MP3, WAV, etc.)",
