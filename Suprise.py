@@ -134,41 +134,32 @@ def save_song(uploaded_file):
 # Home page
 if not st.session_state.clicked:
     st.markdown('<h1 class="title">Welcome to the Dashboard! 🦄🎶</h1>', unsafe_allow_html=True)
+
+    # Play the Banger button (first button)
+    if st.button("Play the Banger! 🎵", key="play_banger"):
+        if st.session_state.song_path and os.path.exists(st.session_state.song_path):
+            try:
+                with open(st.session_state.song_path, "rb") as f:
+                    st.audio(f.read(), format="audio/mp3")
+                st.markdown('<p class="debug-text">Debug: Rockin’ the saved song! 🤘</p>', unsafe_allow_html=True)
+                # Download button for the saved song
+                with open(st.session_state.song_path, "rb") as f:
+                    st.download_button(
+                        label="Download Your Banger! 💾",
+                        data=f,
+                        file_name=os.path.basename(st.session_state.song_path),
+                        mime="audio/mp3",
+                        key="download_saved_song"
+                    )
+            except Exception as e:
+                st.error(f"Can’t play the saved song! 😿 Error: {str(e)}")
+        else:
+            st.warning("No saved banger found! Upload a song below! 😿")
+
+    # Smash for Chapri button (second button)
     st.button("Smash for Chapri! 😜", key="greet_button", on_click=toggle_click)
 
-# Greeting page
-else:
-    # Full-screen greeting
-    st.markdown(
-        """
-        <div class="fullscreen">
-            <h1 class="greeting">Hello Chapri! 🌈</h1>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Play saved song
-    if st.session_state.song_path and os.path.exists(st.session_state.song_path):
-        try:
-            with open(st.session_state.song_path, "rb") as f:
-                st.audio(f.read(), format="audio/mp3")
-            st.markdown('<p class="debug-text">Debug: Rockin’ the saved song! 🤘</p>', unsafe_allow_html=True)
-            # Download button for the saved song
-            with open(st.session_state.song_path, "rb") as f:
-                st.download_button(
-                    label="Download Your Banger! 💾",
-                    data=f,
-                    file_name=os.path.basename(st.session_state.song_path),
-                    mime="audio/mp3",
-                    key="download_saved_song"
-                )
-        except Exception as e:
-            st.error(f"Can’t play the saved song! 😿 Error: {str(e)}")
-    else:
-        st.warning("No saved banger found! Upload a song below! 😿")
-
-    # File uploader (always visible)
+    # File uploader
     st.markdown('<p class="debug-text">Upload your banger song! 🎵</p>', unsafe_allow_html=True)
     uploaded_file = st.file_uploader(
         "Choose your banger (MP3, WAV, OGG)! 😎",
@@ -187,3 +178,14 @@ else:
                 mime=uploaded_file.type,
                 key="download_new_song"
             )
+
+# Greeting page
+else:
+    st.markdown(
+        """
+        <div class="fullscreen">
+            <h1 class="greeting">How is my best prends singing 🌈</h1>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
