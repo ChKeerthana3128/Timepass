@@ -9,7 +9,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Apply colorful and funny CSS styling
+# Apply colorful and funny CSS styling, including hiding drag-and-drop
 st.markdown(
     """
     <style>
@@ -81,6 +81,14 @@ st.markdown(
         align-items: center;
         background: linear-gradient(45deg, #ff0000, #00ff00, #0000ff);
         z-index: 1000;
+    }
+    /* Hide drag-and-drop area of file uploader */
+    .stFileUploader > div > div > div[draggable="true"] {
+        display: none !important;
+    }
+    /* Ensure the file uploader button remains visible */
+    .stFileUploader > div > div > button {
+        display: block !important;
     }
     </style>
     """,
@@ -159,7 +167,7 @@ if not st.session_state.clicked:
     # Smash for Chapri button (second button)
     st.button("Smash for Chapri! 😜", key="greet_button", on_click=toggle_click)
 
-    # File uploader
+    # File uploader (button-only, no drag-and-drop)
     st.markdown('<p class="debug-text">Upload your banger song! 🎵</p>', unsafe_allow_html=True)
     uploaded_file = st.file_uploader(
         "Choose your banger (MP3, WAV, OGG)! 😎",
